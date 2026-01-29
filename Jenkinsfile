@@ -38,19 +38,23 @@ pipeline {
             }
         }
         
-        stage('Push Docker Image to DockerHub') {
+        stage(' Build the Docker Image') {
             steps {
-               echo "Push Docker Image to DockerHub"
-               // Uses your 'dockerhubpwd' credential ID
-             
-               
-               withCredentials([string(credentialsId: 'srisanthosh26', variable: 'DOCKER_TOKEN')]) {
-                    bat '''
-                        docker logout
-                        echo %DOCKER_TOKEN% | docker login -u srisanthosh26 --password-stdin
-                        docker tag my-pipeline-app:v1 srisanthosh26/my-pipeline-app:v1
-                        docker push srisanthosh26/my-pipeline-app:v1
-                    '''
+               echo "Build the Docker Image for mvn project"
+               bat 'docker build -t my-pipeline-app:v1'
+            }
+        }
+         stage('Push Docker Image to DockerHub') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhubpass',
+                                          usernameVariable: 'DOCKER_USER',
+                                          passwordVariable: 'DOCKER_PASS')]) {
+            bat '''
+            docker logout
+            echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
+            docker tag my-pipeline-app:v1 %DOCKER_USER%/myapp:latest
+            docker push %DOCKER_USER%/myapp:latest
+            '''
                }
             }
         }
@@ -78,4 +82,5 @@ pipeline {
         }
     }
 }
+
 

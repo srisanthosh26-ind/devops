@@ -18,7 +18,7 @@ pipeline {
             }
               post {
                   always {
-                         junit '**/target/surefire-reports/*.xml'
+                         junit '*/target/surefire-reports/.xml'
                          echo 'Test Run succeeded!'          
 					}
 				}
@@ -29,19 +29,10 @@ pipeline {
                bat 'mvn clean package -DskipTests' 
             }
         }
-        
-        stage('Build the Docker Image') {
-            steps {
-               echo "Build the Docker Image"
-               // Naming the image consistently for you
-               bat 'docker build -t my-pipeline-app:v1 .'
-            }
-        }
-        
         stage(' Build the Docker Image') {
             steps {
                echo "Build the Docker Image for mvn project"
-               bat 'docker build -t my-pipeline-app:v1'
+               bat 'docker build -t mvnproj:1.0 .'
             }
         }
          stage('Push Docker Image to DockerHub') {
@@ -52,33 +43,26 @@ pipeline {
             bat '''
             docker logout
             echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
-            docker tag my-pipeline-app:v1 %DOCKER_USER%/myapp:latest
+            docker tag mvnproj:1.0 %DOCKER_USER%/myapp:latest
             docker push %DOCKER_USER%/myapp:latest
             '''
-               }
-            }
         }
-       
+    }
+}
+
         stage('Deploy the project using Container') {
             steps {
                 echo "Running Java Application"
-                // This is the specific logic you requested:
-                // 1. Remove any existing container named 'myjavaappcont' (ignore errors if it doesn't exist)
-                // 2. Run the new container from the image we just pushed
-                bat '''
-                    docker rm -f myjavaappcont || exit 0
-                    docker run --name myjavaappcont srisanthosh26/my-pipeline-app:v1
-                '''
             }
         }
     }
-
+ 
     post {
         success {
-            echo 'Pipeline Succeeded! Application is live.'
+            echo 'I succeeded!'
         }
         failure {
-            echo 'Pipeline Failed. Check logs.'
+            echo 'Failed........'
         }
     }
 }

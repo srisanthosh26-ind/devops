@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mvnpro-deployment
+  labels:
+    app: mvnpro
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mvnpro
+  template:
+    metadata:
+      labels:
+        app: mvnpro
+    spec:
+      containers:
+      - name: mvnproj-container
+        image: srisanthosh26/mymvnpro:latest
+        ports:
+        - containerPort: 80

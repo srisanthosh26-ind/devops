@@ -63,7 +63,7 @@ pipeline {
 	               kubectl apply -f deployment.yaml
 	               sleep 20
 	               kubectl get pods
-	               kubectl apply -f services.yaml
+	               kubectl apply -f service.yaml
 	               sleep 10
 	               kubectl get services
 	               "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" image ls   
@@ -107,6 +107,7 @@ pipeline {
         }
     }
 }
+
 
 
 

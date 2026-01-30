@@ -44,7 +44,7 @@ pipeline {
             bat '''
             docker logout
             echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
-            docker tag mvnproj:1.0 %DOCKER_USER%/mymvn:latest
+            docker tag mvnproj:1.0 %DOCKER_USER%/mymvnpro:latest
             docker push %DOCKER_USER%/mymvnpro:latest
             '''
                }
@@ -107,6 +107,7 @@ pipeline {
         }
     }
 }
+
 
 
 

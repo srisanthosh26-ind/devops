@@ -44,8 +44,8 @@ pipeline {
             bat '''
             docker logout
             echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin
-            docker tag mvnproj:1.0 %DOCKER_USER%/myapp:latest
-            docker push %DOCKER_USER%/myapp:latest
+            docker tag mvnproj:1.0 %DOCKER_USER%/mymvn:latest
+            docker push %DOCKER_USER%/mymvnpro:latest
             '''
                }
             }
@@ -77,8 +77,8 @@ pipeline {
                     steps{
                         echo "Running minikube dashboard"
                         bat '''
-						   minikube addons enable metrics-server
-                           minikube dashboard
+						    "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" addons enable metrics-server
+                            "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" dashboard
                            echo "Dashboard is running"
                         '''
                     }
@@ -88,7 +88,7 @@ pipeline {
                     steps{
                         echo "Running minikube services"
                         bat '''
-                           minikube service --all
+                            "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" service --all
                            echo "All services are running"
                         '''				
 				}
@@ -107,6 +107,7 @@ pipeline {
         }
     }
 }
+
 
 
 

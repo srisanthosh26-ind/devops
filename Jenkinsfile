@@ -51,29 +51,62 @@ pipeline {
             }
         }
        
-        stage('Deploy the project using Container') {
+        stage('Deploy the project using k8s') {
             steps {
-                echo "Running Java Application"
-                // This is the specific logic you requested:
-                // 1. Remove any existing container named 'myjavaappcont' (ignore errors if it doesn't exist)
-                // 2. Run the new container from the image we just pushed
+                echo "Running Java Application in k8s"
                 bat '''
-                    docker rm -f myjavaappcont || exit 0
-                    docker run --name myjavaappcont srisanthosh26/my-pipeline-app:v1
-                '''
+                   "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" delete
+	               "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" start
+	               "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" status
+	               
+	               "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" image load srisanthosh26/mymvnpro:latest
+	               kubectl apply -f deployment.yaml
+	               sleep 20
+	               kubectl get pods
+	               kubectl apply -f services.yaml
+	               sleep 10
+	               kubectl get services
+	               "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe" image ls   
+	           
+	            '''
             }
         }
+        stage('Parrallel Loading of services and Dashboard'){
+			parallel{
+				stage('Run minikube dashboard'){
+                    steps{
+                        echo "Running minikube dashboard"
+                        bat '''
+                           minikube dashboard
+                           echo "Dashboard is running"
+                        '''
+                    }
+					
+				}
+				stage('Run minikube services'){
+                    steps{
+                        echo "Running minikube services"
+                        bat '''
+                           minikube service --all
+                           echo "All services are running"
+                        '''				
+				}
+			}
+		}
+        
     }
-
+	}
     post {
         success {
-            echo 'Pipeline Succeeded! Application is live.'
+            echo 'I succeeded!'
+           
         }
         failure {
-            echo 'Pipeline Failed. Check logs.'
+            echo 'Failed........'
         }
     }
 }
+
 
 
 
